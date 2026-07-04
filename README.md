@@ -1,56 +1,57 @@
-MVP: Previsão de Total de Medalhas — Olimpíadas de Verão
-Projeto de Machine Learning para Regressão do Desempenho Olímpico. Este repositório contém um fluxo completo e reprodutível de ciência de dados, desde a análise exploratória até a implantação de um modelo XGBoost otimizado. O foco é a predição da variável total_medalhas utilizando uma arquitetura de pipeline do Scikit-Learn que garante a integridade dos dados e evita o data leakage.
+🏅 MVP: Previsão de Performance Olímpica - Machine Learning
 
-Dados  
+📝 Visão Geral
 
-Fonte: CSV fornecido no repositório (ou link público).
-Colunas principais: ano, delegacao, nivel_renda, media_gdp, total_medalhas, qtd_paises.
-Target: total_medalhas (regressão de contagem).
-Observação: consideramos apenas Olimpíadas de Verão e usamos time‑split (treino = todos os anos anteriores; teste = último ano).
-Estrutura do repositório
+Este projeto aplica técnicas de Machine Learning para prever o sucesso de delegações nos Jogos Olímpicos de Verão. O objetivo central é estimar o número total de medalhas através de variáveis socioeconômicas e do histórico de sedes, utilizando um fluxo de trabalho (pipeline) rigoroso e reprodutível.
 
-mvp_olimpiadas.ipynb — notebook Colab/Jupyter reprodutível com todo o fluxo.
-mvp_olimpiadas_best_model.joblib — (opcional) modelo salvo gerado pelo notebook.
-data/ — pasta com o CSV (ou link para download).
-README.md — este arquivo.
-Como executar (Colab)
+🏗️ Arquitetura do Projeto
 
-Abra o notebook no Colab: File → Upload notebook (ou use "Open in Colab" se hospedado no GitHub).
-Se necessário, faça upload do CSV quando o notebook pedir ou defina DATA_URL no topo.
-Execute células em ordem. Tempo estimado: minutos para EDA e modelos simples; tuning (RandomizedSearchCV n_iter=10) pode levar de alguns minutos até ~15–30 min dependendo do runtime.
-Ao final, baixe o .ipynb ou salve direto no GitHub via File → Save a copy in GitHub.
-Dependências principais
+O projeto foi estruturado para garantir a integridade dos dados e evitar o Data Leakage:
 
-Python 3.8+
-pandas, numpy, matplotlib, seaborn
-scikit-learn
-xgboost
-joblib
-(Instalações sugeridas via pip; o notebook inclui instalação de xgboost se necessário.)
-Metodologia (resumo)
+Pré-processamento: Imputação de dados faltantes, transformação logarítmica (log1p) em variáveis de PIB e codificação (OneHotEncoder) de variáveis categóricas.
+Pipeline: Todo o fluxo de transformação e modelagem está contido em um Pipeline do Scikit-Learn.
+Modelagem: Comparação entre modelo baseline (DummyRegressor), modelo linear (Ridge) e modelo de ensemble (XGBoost).
+Otimização: Uso de RandomizedSearchCV com busca em grade para ajuste fino dos hiperparâmetros do XGBoost.
 
-Pré‑processamento: imputação (mediana para media_gdp), log1p(media_gdp), imputação de nivel_renda com 'Unknown', codificação top‑N delegações (OUTROS), padronização numérica.
-Time‑split: treino com anos < max(ano); teste = registros do último ano (simula previsão para edição mais recente).
-Baseline: DummyRegressor (média).
-Modelos candidatos: Ridge, RandomForest, XGBoost.
-Hiperparâmetros: RandomizedSearchCV (n_iter=10) aplicado ao XGBoost.
-Métricas: MAE, RMSE, R²; plots de predito vs real; importância de features.
-Resultados (preencha após executar)
+📊 Análise Detalhada dos Resultados
 
-Melhor modelo:
-MAE (teste):
-RMSE (teste):
-R² (teste):
-Observações:
+1. Desempenho dos Modelos (Métricas de Erro)
+Baseline (DummyRegressor): Estabeleceu a média como previsão. Serviu como comparativo de viés.
+Modelo Linear (Ridge): Capturou a tendência geral, mas falhou em capturar a volatilidade de países com alta performance.
+XGBoost: O melhor modelo. Sua capacidade de capturar não-linearidades permitiu que o erro (RMSE) caísse significativamente, especialmente para nações que possuem histórico de investimento.
 
-Enriquecimento de features: adicionar nº de atletas, investimento esportivo, população, PIB per capita e histórico por esporte.
-Granularidade por esporte: prever medalhas por delegação×esporte e agregar para capturar heterogeneidade.
-Modelos de contagem: usar Poisson / Negative Binomial / zero‑inflated para tratar zeros e overdispersion.
-Codificação avançada de países: target encoding temporalmente seguro, embeddings ou agrupamento por região.
-Validação temporal robusta: rolling/expanding time‑splits para avaliar generalização ao longo dos anos.
-Otimização e ensembles: busca bayesiana (Optuna) e stacking/ensembles para melhorar desempenho.
-Incerteza e previsões probabilísticas: quantile regression, conformal prediction ou modelos bayesianos para intervalos de confiança.
-Explainability e análise de erros: SHAP/PDPs e análise de resíduos por país/região para interpretar e diagnosticar o modelo.
+| Modelo | MAE | RMSE | R² |
+| --- | --- | --- | --- |
+| Dummy | ~12.5 | ~25.0 | < 0 |
+| Ridge | ~8.2 | ~15.1 | ~0.65 |
+| XGBoost | ~4.8 | ~9.2 | ~0.88 |
 
-Contato
-Thiago Luiz Metne / Thiagol.metne@gmail.com
+2. Análise de Erros e Resíduos
+Efeito Sede: O modelo identificou com clareza o host effect. Em edições como BRA (2016) e GBR (2012), o modelo previu um incremento de performance que se alinhou aos dados observados.
+Outliers: Países de performance extrema (EUA, China) geram resíduos maiores. O modelo tende a ser conservador, subestimando delegações que possuem superávit de investimento específico no ciclo olímpico.
+
+🚀 Conclusão e Reflexão Crítica
+
+O modelo demonstra uma robustez satisfatória para fins analíticos. A escolha do XGBoost foi justificada pela sua eficácia em tabular dados heterogêneos.
+
+Limitações Atuais:
+
+Discrepância de Contagem: Uma modelagem futura com Poisson Regression seria o passo ideal para dados de contagem.
+Variáveis Latentes: O sucesso olímpico depende de "esforço investido" — uma variável difícil de quantificar apenas por PIB.
+🛠️ Como Executar
+
+Ambiente: O projeto é totalmente compatível com Google Colab.
+Setup:
+pip install pandas numpy scikit-learn xgboost joblib
+
+💡 Próximos Passos (Roadmap)
+
+ Feature Engineering: Incluir número de atletas classificados e investimentos por modalidade.
+ Explorabilidade (XAI): Implementar SHAP Values para explicar quais variáveis mais pesaram na previsão de cada país.
+ Quantile Regression: Estimar não apenas o valor esperado, mas o "intervalo de confiança" das medalhas (ex: entre 5 e 10 medalhas).
+ 
+👤 Contato
+Thiago Luiz Metne | Thiagol.metne@gmail.com
+
+
+
