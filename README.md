@@ -1,6 +1,5 @@
 MVP: Previsão de Total de Medalhas — Olimpíadas de Verão
-Resumo
-Projeto MVP (Machine Learning & Analytics) que prevê o total de medalhas por delegação nas Olimpíadas de Verão usando um modelo de regressão. O notebook aplica fluxo reprodutível: definição do problema, EDA, pré-processamento, modelagem, ajuste de hiperparâmetros, avaliação temporal (time‑split) e conclusão.
+Projeto de Machine Learning para Regressão do Desempenho Olímpico. Este repositório contém um fluxo completo e reprodutível de ciência de dados, desde a análise exploratória até a implantação de um modelo XGBoost otimizado. O foco é a predição da variável total_medalhas utilizando uma arquitetura de pipeline do Scikit-Learn que garante a integridade dos dados e evita o data leakage.
 
 Dados  
 
