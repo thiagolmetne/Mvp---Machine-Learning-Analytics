@@ -1,4 +1,4 @@
-##🏅 MVP: Previsão de Performance Olímpica - Machine Learning
+🏅 ## MVP: Previsão de Performance Olímpica - Machine Learning
 
 📝 Visão Geral
 
